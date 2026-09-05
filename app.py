@@ -1,64 +1,143 @@
 import streamlit as st
+import re
+
+# ---------------- PAGE SETTINGS ----------------
 
 st.set_page_config(
-    page_title="My Productivity",
-    page_icon="🚀",
-    layout="wide"
+    page_title="User Data Collection",
+    page_icon="📋",
+    layout="centered"
 )
 
-# ---------------- LOGIN ----------------
+# ---------------- TITLE ----------------
 
-USERNAME = "muthu"
-PASSWORD = "Muthu@123"
+st.title("📋 User Data Collection")
+st.write("Please enter your details below.")
 
-if "logged_in" not in st.session_state:
-    st.session_state.logged_in = False
+st.divider()
 
+# ---------------- INPUT FORM ----------------
 
-if not st.session_state.logged_in:
+with st.form("user_form"):
 
-    st.title("🔐 Login")
-    st.write("Welcome to My Productivity Dashboard")
-
-    username = st.text_input(
-        "👤 Username",
-        placeholder="Enter username"
+    name = st.text_input(
+        "👤 Name",
+        placeholder="Enter your name"
     )
 
-    password = st.text_input(
-        "🔑 Password",
-        type="password",
-        placeholder="Enter password"
+    age = st.number_input(
+        "🎂 Age",
+        min_value=1,
+        max_value=120,
+        value=18
     )
 
-    if st.button("🚀 Login"):
+    location = st.text_input(
+        "📍 Location",
+        placeholder="Example: Chennai"
+    )
 
-        if username == USERNAME and password == PASSWORD:
+    email = st.text_input(
+        "📧 Email ID",
+        placeholder="example@gmail.com"
+    )
 
-            st.session_state.logged_in = True
-            st.success("Login successful! 🎉")
-            st.rerun()
+    submit = st.form_submit_button(
+        "🚀 Submit Details"
+    )
 
-        else:
+# ---------------- EMAIL VALIDATION ----------------
 
-            st.error("❌ Invalid username or password")
+def valid_email(email):
+    pattern = r"^[\w\.-]+@[\w\.-]+\.\w+$"
+    return re.match(pattern, email)
 
-    st.stop()
 
+# ---------------- SHOW DATA ----------------
 
-# ---------------- MAIN APP ----------------
+if submit:
 
-st.title("🚀 My Productivity Dashboard")
+    if not name.strip():
+        st.error("❌ Please enter your name.")
 
-st.write("Welcome back, Muthu! 👋")
+    elif not location.strip():
+        st.error("❌ Please enter your location.")
 
-st.sidebar.success("✅ Logged in")
+    elif not email.strip():
+        st.error("❌ Please enter your email.")
 
-if st.sidebar.button("🚪 Logout"):
+    elif not valid_email(email):
+        st.error("❌ Please enter a valid email address.")
 
-    st.session_state.logged_in = False
-    st.rerun()
+    else:
 
-st.header("🏠 Home")
+        st.success("✅ Details submitted successfully!")
 
-st.write("Organize your day and stay productive.")
+        st.divider()
+
+        st.subheader("👤 Your Profile")
+
+        # -------- PROFILE CARD --------
+
+        col1, col2 = st.columns([1, 2])
+
+        with col1:
+            st.markdown(
+                """
+                <div style="
+                    background:#e8f7ff;
+                    padding:30px;
+                    border-radius:20px;
+                    text-align:center;
+                    font-size:60px;
+                ">
+                    👤
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
+
+        with col2:
+
+            st.markdown(
+                f"""
+                <div style="
+                    background:#f8f9fa;
+                    padding:20px;
+                    border-radius:15px;
+                    border:1px solid #ddd;
+                ">
+
+                <h2>👋 {name}</h2>
+
+                <p>🎂 <b>Age:</b> {age}</p>
+
+                <p>📍 <b>Location:</b> {location}</p>
+
+                <p>📧 <b>Email:</b> {email}</p>
+
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
+
+        st.divider()
+
+        # -------- METRICS --------
+
+        col1, col2, col3 = st.columns(3)
+
+        with col1:
+            st.metric("🎂 Age", age)
+
+        with col2:
+            st.metric("📍 Location", location)
+
+        with col3:
+            st.metric("📧 Email", "Verified ✅")
+
+        st.divider()
+
+        st.info(
+            f"🎉 Welcome {name}! Your information has been received."
+        )

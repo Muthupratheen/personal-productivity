@@ -6,7 +6,7 @@ import re
 # =========================================================
 
 st.set_page_config(
-    page_title="Data Collection",
+    page_title="User Data Collection",
     page_icon="📋",
     layout="wide"
 )
